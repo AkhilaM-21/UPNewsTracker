@@ -1,0 +1,230 @@
+/* ── Articles Table ─────────────────────────────────────────────────────────── */
+.at-wrap {
+  margin-top: 14px;
+  border: 1px solid #e0d4c0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Header bar */
+.at-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 10px 12px;
+  background: var(--orange-light);
+  border-bottom: 1px solid #e0d4c0;
+}
+
+.at-header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* ── Translation Toggle ────────────────────────────────── */
+.trans-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,0,0,0.05);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.trans-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+
+.trans-label.active {
+  color: #7a4a00;
+}
+
+.trans-switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 18px;
+}
+
+.trans-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.trans-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 18px;
+}
+
+.trans-slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .trans-slider {
+  background-color: var(--orange);
+}
+
+input:focus + .trans-slider {
+  box-shadow: 0 0 1px var(--orange);
+}
+
+input:checked + .trans-slider:before {
+  transform: translateX(16px);
+}
+
+.at-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a4a00;
+}
+
+.at-count {
+  font-size: 11px;
+  color: #888;
+}
+
+/* Filter tabs */
+.at-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.at-filter-btn {
+  padding: 3px 12px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all .12s;
+}
+
+.at-filter-btn:hover { opacity: .8; }
+
+.at-filter-btn.active-all        { background: #555;             border-color: #555;             color: #fff; }
+.at-filter-btn.active-pol        { background: #6a3fa3;          border-color: #6a3fa3;          color: #fff; }
+.at-filter-btn.active-positive   { background: #3b6d11;          border-color: #3b6d11;          color: #fff; }
+.at-filter-btn.active-negative   { background: #a32d2d;          border-color: #a32d2d;          color: #fff; }
+.at-filter-btn.active-neutral    { background: #185fa5;          border-color: #185fa5;          color: #fff; }
+
+/* Table */
+.at-table-wrap {
+  overflow-x: auto;
+}
+
+.at-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.at-table thead tr {
+  background: #f7f1e9;
+}
+
+.at-table th {
+  padding: 7px 10px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7a4a00;
+  border-bottom: 1px solid #e0d4c0;
+  white-space: nowrap;
+}
+
+.at-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #f0e8da;
+  vertical-align: middle;
+  color: #333;
+}
+
+.at-table tbody tr:last-child td { border-bottom: none; }
+.at-table tbody tr:hover { background: #fdf8f2; }
+
+/* Title link */
+.at-link {
+  color: #1a5ea8;
+  text-decoration: none;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.at-link:hover { text-decoration: underline; }
+
+/* Source pill */
+.at-source {
+  display: inline-block;
+  background: var(--orange-light);
+  border: 1px solid var(--orange);
+  border-radius: 3px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #7a4a00;
+  white-space: nowrap;
+}
+
+/* Sentiment badge */
+.at-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.at-badge.pos { background: #eaf3de; color: #3b6d11; }
+.at-badge.neg { background: #fcebeb; color: #a32d2d; }
+.at-badge.neu { background: #e6f1fb; color: #185fa5; }
+
+/* Pol badge */
+.at-pol {
+  display: inline-block;
+  background: #f0e8fa;
+  color: #6a3fa3;
+  border: 1px solid #c8a8e8;
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Date */
+.at-date { color: #888; white-space: nowrap; font-size: 11px; }
+
+/* Empty state */
+.at-empty {
+  padding: 30px;
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+}

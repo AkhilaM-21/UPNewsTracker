@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: up-tracker-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: FRONTEND_URL
+        sync: false   # Set to your Vercel URL after frontend is deployed
+      - key: PORT
+        value: 4000

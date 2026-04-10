@@ -1,0 +1,138 @@
+.dash { display: flex; flex-direction: column; gap: 10px; background: #f0f0f0; padding: 5px; border-radius: 4px; }
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 2px;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 5px;
+}
+
+.dash-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #333;
+  letter-spacing: -0.02em;
+}
+
+.dash-download-btn {
+  background: var(--orange);
+  color: #000;
+  border: 1px solid var(--orange-dark);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.dash-download-btn:hover:not(:disabled) {
+  background: #fff;
+  color: var(--orange-dark);
+  transform: translateY(-1px);
+}
+
+.dash-download-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+@media print {
+  .dash-download-btn, .app-header, .cb-wrap {
+    display: none !important;
+  }
+}
+
+.dash-summary {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.sum-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.sum-num { font-size: 26px; font-weight: 700; line-height: 1; color: #222; }
+.sum-num.pos { color: var(--positive); }
+.sum-num.neg { color: var(--negative); }
+.sum-num.neu { color: var(--neutral); }
+.sum-num.pol { color: var(--orange-dark); }
+.sum-label { font-size: 10px; color: var(--text-muted); text-align: center; text-transform: uppercase; letter-spacing: .04em; }
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+/* Few sources: Trending topics spans full width underneath */
+.dash-grid.is-compact {
+  grid-template-areas: 
+    "source donut date"
+    "topics topics topics";
+}
+
+/* Many sources: Source table spans vertically, topics tucks under charts */
+.dash-grid.is-large {
+  grid-template-areas: 
+    "source donut date"
+    "source topics topics";
+}
+
+.dash-cell-source { grid-area: source; }
+.dash-cell-donut { grid-area: donut; }
+.dash-cell-date { grid-area: date; }
+.dash-cell-topics { grid-area: topics; }
+
+.chart-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 12px;
+}
+.chart-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+@media (max-width: 1100px) {
+  .dash-grid.is-large, .dash-grid.is-compact {
+    grid-template-columns: 300px 1fr;
+    grid-template-areas: 
+      "source donut"
+      "source date"
+      "topics topics";
+  }
+}
+
+@media (max-width: 850px) {
+  .dash-grid.is-large, .dash-grid.is-compact {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "source"
+      "donut"
+      "date"
+      "topics";
+  }
+  .dash-summary { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 540px) {
+  .dash-summary { grid-template-columns: repeat(2, 1fr); }
+}
