@@ -28,6 +28,28 @@ function translateText(text) {
   });
 }
 
+// ─── Synonym Expansion Logic ──────────────────────────────────────────────────
+const SYNONYM_MAP = {
+  "up": ["UP", "Uttar Pradesh", "यूपी", "उत्तर प्रदेश"],
+  "sp": ["SP", "Samajwadi Party", "सपा", "समाजवादी पार्टी"],
+  "bjp": ["BJP", "Bharatiya Janata Party", "भाजपा", "भारतीय जनता पार्टी"],
+  "bsp": ["BSP", "Bahujan Samaj Party", "बसपा", "बहुजन समाज पार्टी"],
+  "congress": ["Congress", "INC", "कांग्रेस"],
+  "aap": ["AAP", "Aam Aadmi Party", "आप", "आम आदमी पार्टी"],
+  "rld": ["RLD", "Rashtriya Lok Dal", "आरएलडी", "रालोद", "जयंत चौधरी"],
+  "nda": ["NDA", "National Democratic Alliance", "एनडीए"]
+};
+
+function expandFuzzy(term) {
+  const t = term.toLowerCase().trim().replace(/"/g, '');
+  for (const [key, variants] of Object.entries(SYNONYM_MAP)) {
+    if (t === key || variants.map(v => v.toLowerCase()).includes(t)) {
+      return `(${variants.map(v => v.includes(" ") ? `"${v}"` : v).join(" OR ")})`;
+    }
+  }
+  return term.includes(" ") ? `"${term}"` : term;
+}
+
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(express.json());
 app.use(cors({
@@ -55,43 +77,58 @@ app.post("/api/analyze", async (req, res) => {
   // Make `to` inclusive by extending it to end-of-day
   if (to) to.setHours(23, 59, 59, 999);
 
-  // Build search query: use both English and Hindi for the core topic (UP Politics)
-  const baseQuery = '(Uttar Pradesh OR "उत्तर प्रदेश" OR UP OR यूपी) (politics OR राजनीति)';
-  let query = baseQuery;
-  let fetchLimit = 4;
+  // Unified regional context
+  const coreUP = '(UP OR "Uttar Pradesh" OR यूपी OR "उत्तर प्रदेश")';
+  let rawArticles = [];
 
+  // 1. Process and Translate Keywords
+  let uniqueGroups = [];
   if (keywords?.trim()) {
-    // Attempt to translate entire keyword string to expand reach
     const translated = await translateText(keywords);
-    
-    // Combine original and translated keywords to find results in both languages
-    // We treat them as OR groups: (Original logic) OR (Translated logic)
     const allInputSets = [...new Set([keywords, translated])];
-    
-    const combinedGroups = [];
+
     allInputSets.forEach(inputSet => {
       const orParts = inputSet.split(",").map(p => p.trim()).filter(p => p.length > 0);
       orParts.forEach(part => {
         const andParts = part.split("+").map(t => t.trim()).filter(t => t.length > 0);
         if (andParts.length > 0) {
-          const quoted = andParts.map(t => t.includes(" ") ? `"${t}"` : t);
-          combinedGroups.push(quoted.length > 1 ? `(${quoted.join(" ")})` : quoted[0]);
+          // Sort terms alphabetically so "A + B" and "B + A" are identical
+          const sorted = andParts.sort();
+          const formatted = sorted.map(t => expandFuzzy(t));
+          uniqueGroups.push(formatted.length > 1 ? `(${formatted.join(" ")})` : formatted[0]);
         }
       });
     });
+    uniqueGroups = [...new Set(uniqueGroups)];
+  }
 
-    const uniqueGroups = [...new Set(combinedGroups)];
+  // 2. Fetch parallel search tasks (Batching to prevent timeouts)
+  try {
     if (uniqueGroups.length > 0) {
-      const orQuery = uniqueGroups.join(" OR ");
-      query = `${baseQuery} (${orQuery})`;
-      fetchLimit = uniqueGroups.length > 4 ? 10 : 8;
+      // Limit total keyword groups to the first 10 for performance
+      const activeGroups = uniqueGroups.slice(0, 10);
+      
+      // Process in batches of 2 to avoid overwhelming Google/Sites
+      for (let i = 0; i < activeGroups.length; i += 2) {
+        const batch = activeGroups.slice(i, i + 2);
+        const searchTasks = batch.map(subQuery => {
+          const finalQuery = subQuery.includes("Uttar Pradesh") ? subQuery : `${coreUP} ${subQuery}`;
+          return fetchAllSources(sources, finalQuery, 8);
+        });
+
+        const taskResults = await Promise.all(searchTasks);
+        rawArticles.push(...taskResults.flat());
+      }
+    } else {
+      // Default: UP + generic politics context
+      rawArticles = await fetchAllSources(sources, `${coreUP} (politics OR राजनीति)`, 15);
     }
+  } catch (err) {
+    console.error("Fetch batching failed:", err);
+    // Continue with whatever we have fetched so far, don't crash the whole request
   }
 
   try {
-    // 1. Fetch RSS articles for every selected source
-    const rawArticles = await fetchAllSources(sources, query, fetchLimit);
-
     if (rawArticles.length === 0) {
       return res.json({ articles: [], count: 0 });
     }
@@ -111,6 +148,11 @@ app.post("/api/analyze", async (req, res) => {
         topics: analysis.topics,
       };
     });
+
+    // 3. Simple URL deduplication
+    const uniqueMap = new Map();
+    articles.forEach(a => { if (!uniqueMap.has(a.url)) uniqueMap.set(a.url, a); });
+    articles = Array.from(uniqueMap.values());
 
     // 3. Apply optional date filter (if no dates given, skip — return everything)
     if (from || to) {

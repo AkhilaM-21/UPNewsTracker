@@ -5,7 +5,22 @@
  */
 
 const Parser = require("rss-parser");
-const parser = new Parser({ timeout: 12000 });
+const parser = new Parser({ timeout: 20000 });
+
+/**
+ * Fetch with automatic retries for stability (handles "socket hang up")
+ */
+async function fetchWithRetry(url, retries = 2) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await parser.parseURL(url);
+    } catch (err) {
+      if (i === retries) throw err;
+      // Wait 1s and retry
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+}
 
 // Map source label → Google-News site: filter (domain hint)
 const SOURCE_DOMAINS = {
@@ -91,13 +106,13 @@ async function fetchForSource(sourceName, query, limit = 4) {
   const url = buildRssUrl(query, domain);
 
   try {
-    const feed = await parser.parseURL(url);
+    const feed = await fetchWithRetry(url);
     const items = (feed.items || []).slice(0, limit);
 
     if (items.length === 0 && domain) {
       // Fallback: search without site filter
       const fallbackUrl = buildRssUrl(`${query} ${sourceName}`, null);
-      const fallbackFeed = await parser.parseURL(fallbackUrl);
+      const fallbackFeed = await fetchWithRetry(fallbackUrl);
       return (fallbackFeed.items || []).slice(0, limit).map((item) => formatItem(item, sourceName));
     }
 
