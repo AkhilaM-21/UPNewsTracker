@@ -34,25 +34,6 @@ export default function App() {
     sessionStorage.setItem("up_last_query", lastQuery);
   }, [articles, analyzed, runDate, lastQuery]);
 
-  const toggleTranslation = () => {
-    const newVal = !isEnglish;
-    setIsEnglish(newVal);
-
-    if (newVal) {
-      // Set cookies for translation
-      document.cookie = "googtrans=/auto/en; path=/";
-      document.cookie = "googtrans=/auto/en; domain=" + window.location.hostname + "; path=/";
-      // Force reload to apply
-      window.location.reload();
-    } else {
-      // Clear cookies
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
-      // Force reload to restore original Hindi
-      window.location.reload();
-    }
-  };
-
   async function handleAnalyze(sources, keywords, fromDate, toDate) {
     setLoading(true);
     setError("");
@@ -84,19 +65,8 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="app-header notranslate">
-        <div className="app-header-left">
-          <h1>UP Politics Media Tracker</h1>
-          <span className="app-badge">Manual Analysis Mode</span>
-        </div>
-
-        <div className="trans-toggle-wrap">
-          <span className={`trans-label ${!isEnglish ? 'active' : ''}`}>हिन्दी</span>
-          <label className="trans-switch">
-            <input type="checkbox" checked={isEnglish} onChange={toggleTranslation} />
-            <span className="trans-slider"></span>
-          </label>
-          <span className={`trans-label ${isEnglish ? 'active' : ''}`}>ENG</span>
-        </div>
+        <h1>UP Politics Media Tracker</h1>
+        <span className="app-badge">Manual Analysis Mode</span>
       </header>
 
       <ControlsBar onAnalyze={handleAnalyze} loading={loading} />
