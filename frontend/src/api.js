@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_URL || "https://number-adaptor-parents-fantasy.trycloudflare.com";
+const BASE = import.meta.env.VITE_API_URL || "https://avenue-attention-suggestions-alabama.trycloudflare.com";
 
 export async function analyzeArticles(sources, keywords = "", fromDate = null, toDate = null) {
   const res = await fetch(`${BASE}/api/analyze`, {
