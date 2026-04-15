@@ -113,24 +113,18 @@ function buildUrl(query, fromDate, toDate, start = 0) {
   return url;
 }
 
-// ─── CREATE DRIVER (Anti-Detection + AWS Headless Support) ───────────────────
-// Set HEADLESS=true in your .env on AWS. Local dev keeps browser visible.
-
-const IS_HEADLESS = process.env.HEADLESS === "true";
-
+// ─── CREATE DRIVER (Always Headless - Maximum Compatibility) ─────────────────
+// Always runs in headless mode (works everywhere: local, AWS, Render, etc)
+// No display servers needed, no Xvfb required, no local rendering
 
 async function createDriver() {
   const options = new chrome.Options();
 
-  // ── Headless mode (AWS / production) ─────────────────────────────────────
-  if (IS_HEADLESS) {
-    options.addArguments("--headless=new");  // Chrome 112+ new headless (less detectable)
-    options.addArguments("--disable-gpu");   // Required on AWS (no GPU)
-    options.addArguments("--no-zygote");     // Stability on AWS Lambda-style envs
-    console.log("Running in HEADLESS mode (AWS).");
-  } else {
-    console.log("Running in VISIBLE mode (local dev).");
-  }
+  // ── Always Headless (for local + AWS + Render + any server) ──────────────
+  options.addArguments("--headless=new");     // Chrome 112+ new headless (less detectable)
+  options.addArguments("--disable-gpu");      // No GPU needed
+  options.addArguments("--no-zygote");        // Stability across platforms
+  console.log("🚀 Running in HEADLESS mode (universal).");
 
   // ── Common args (local + AWS) ─────────────────────────────────────────────
   options.addArguments("--no-sandbox");                           // REQUIRED on AWS
