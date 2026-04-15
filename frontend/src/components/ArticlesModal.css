@@ -1,0 +1,33 @@
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+.modal-box {
+  background: #fff; border-radius: 4px; width: 100%; max-width: 700px;
+  max-height: 88vh; display: flex; flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0,0,0,.22);
+}
+.modal-header {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--orange); padding: 10px 14px; border-radius: 4px 4px 0 0;
+}
+.modal-title { font-size: 14px; font-weight: 700; color: #000; flex: 1; }
+.modal-count { font-size: 11px; color: #555; background: rgba(255,255,255,.5); padding: 2px 8px; border-radius: 3px; }
+.modal-close { background: none; border: none; font-size: 16px; color: #333; line-height: 1; padding: 0 2px; }
+.modal-body { padding: 12px 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.modal-empty { color: #aaa; font-size: 12px; text-align: center; padding: 20px 0; }
+
+.art-card { border: 1px solid #e5e5e5; border-radius: 3px; padding: 10px 12px; background: #fafafa; }
+.art-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+.art-title { font-size: 13px; font-weight: 600; line-height: 1.45; flex: 1; }
+.art-link { color: #185fa5; text-decoration: none; }
+.art-link:hover { text-decoration: underline; }
+.art-badge { padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+.art-summary { font-size: 12px; color: #555; line-height: 1.5; margin-bottom: 6px; }
+.art-meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-bottom: 5px; }
+.art-date { font-size: 10px; color: #888; }
+.art-tag { font-size: 10px; background: #f0f0f0; color: #555; padding: 1px 6px; border-radius: 3px; }
+.art-tag.pol { background: #fde9ea; color: #ed1d24; font-weight: 600; }
+.art-score { font-size: 10px; color: #888; margin-left: auto; }
+.art-bar-wrap { height: 3px; background: #eee; border-radius: 2px; overflow: hidden; }
+.art-bar-fill { height: 100%; border-radius: 2px; transition: width .4s; }

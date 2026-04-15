@@ -1,0 +1,28 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f0f0f0;
+  color: #222;
+  font-size: 13px;
+  min-height: 100vh;
+}
+:root {
+  --orange: #ed1d24;
+  --orange-dark: #b81419;
+  --orange-light: #fde9ea;
+  --positive: #0e6d37;
+  --negative: #ed1d24;
+  --neutral: #64748b;
+  --border: #cccccc;
+  --bg-white: #ffffff;
+  --text-muted: #666;
+}
+
+/* Fix React + Google Translate crash */
+.notranslate {
+  translate: no !important;
+}
+
+button { cursor: pointer; font-family: inherit; }
+a { color: var(--neutral); }
+a:hover { text-decoration: underline; }
