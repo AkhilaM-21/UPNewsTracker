@@ -62,15 +62,8 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
     return saved ? JSON.parse(saved) : [];
   });
   const [isEnglish, setIsEnglish] = useState(() => {
-    // Load translation state from sessionStorage if available
-    const saved = sessionStorage.getItem("up_is_english");
-    return saved ? JSON.parse(saved) : false;
+    return document.cookie.includes("googtrans=/auto/en") || document.cookie.includes("googtrans=/en/en");
   });
-
-  // Save translation state to sessionStorage whenever it changes
-  useEffect(() => {
-    sessionStorage.setItem("up_is_english", JSON.stringify(isEnglish));
-  }, [isEnglish]);
 
   // ── Manual entry state ──────────────────────────────────────────────────────
   const [showManualForm, setShowManualForm] = useState(false);
@@ -133,19 +126,15 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
   const toggleTranslation = () => {
     const newVal = !isEnglish;
     setIsEnglish(newVal);
-    
+
     if (newVal) {
-      // Enable English translation using Google Translate cookie
-      document.cookie = 'googtrans=/hi/en; path=/;';
-      document.cookie = 'googtrans=/hi/en; path=/; domain=' + window.location.hostname;
-      // Reload to apply translation
-      setTimeout(() => window.location.reload(), 300);
+      document.cookie = "googtrans=/auto/en; path=/";
+      document.cookie = "googtrans=/auto/en; domain=" + window.location.hostname + "; path=/";
+      window.location.reload();
     } else {
-      // Clear translation - show original Hindi
       document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
-      // Reload to restore original
-      setTimeout(() => window.location.reload(), 300);
+      window.location.reload();
     }
   };
 
@@ -377,7 +366,7 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
 
 
           <thead>
-            <tr className="notranslate">
+            <tr>
               <th className="notranslate" style={{ width: 40, textAlign: "center" }}>
                 <input
                   type="checkbox"
@@ -386,10 +375,10 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
                   checked={selectedIds.size > 0 && selectedIds.size === allArticles.length}
                 />
               </th>
-              <th style={{ width: 45, textAlign: "left" }}>#</th>
+              <th className="notranslate" style={{ width: 45, textAlign: "left" }}>#</th>
               <th>Article Title & Source</th>
-              <th style={{ width: 100 }}>Date</th>
-              <th style={{ width: 110 }}>Sentiment</th>
+              <th className="notranslate" style={{ width: 100 }}>Date</th>
+              <th className="notranslate" style={{ width: 110 }}>Sentiment</th>
             </tr>
           </thead>
           <tbody>
@@ -408,15 +397,15 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
                   </td>
                   <td className="idx notranslate" style={{ width: 45 }}>{globalIdx + 1}</td>
 
-                  <td>
+                  <td lang="hi">
                     <div className="at-cell-title">
                       <a href={a.url} target="_blank" rel="noreferrer" className="at-link">
                         {a.title}
                       </a>
-                      <span className="at-source-tag">{a.source}</span>
+                      <span className="at-source-tag notranslate">{a.source}</span>
                     </div>
                   </td>
-                  <td style={{ width: 100 }}>
+                  <td className="notranslate" style={{ width: 100 }}>
                     <span className="at-date-cell">{formatDateDisplay(a.date)}</span>
                   </td>
                   <td className="notranslate" style={{ width: 110 }}>
