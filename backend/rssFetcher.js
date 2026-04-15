@@ -121,20 +121,32 @@ async function createDriver() {
   const options = new chrome.Options();
 
   // ── Always Headless (for local + AWS + Render + any server) ──────────────
-  options.addArguments("--headless=new");     // Chrome 112+ new headless (less detectable)
-  options.addArguments("--disable-gpu");      // No GPU needed
-  options.addArguments("--no-zygote");        // Stability across platforms
-  console.log("🚀 Running in HEADLESS mode (universal).");
-
-  // ── Common args (local + AWS) ─────────────────────────────────────────────
-  options.addArguments("--no-sandbox");                           // REQUIRED on AWS
-  options.addArguments("--disable-dev-shm-usage");               // REQUIRED on AWS
+  options.addArguments("--headless=new");                          // Chrome 112+ new headless
+  options.addArguments("--disable-gpu");                           // No GPU needed
+  options.addArguments("--no-zygote");                             // Stability across platforms
+  options.addArguments("--single-process");                        // Better for servers
+  
+  // ── Ensure no display required ────────────────────────────────────────────
+  options.addArguments("--no-sandbox");                            // REQUIRED on AWS/servers
+  options.addArguments("--disable-dev-shm-usage");                 // REQUIRED on AWS/servers
   options.addArguments("--disable-blink-features=AutomationControlled");
   options.addArguments("--disable-infobars");
   options.addArguments("--disable-extensions");
   options.addArguments("--disable-popup-blocking");
+  options.addArguments("--disable-background-networking");
+  options.addArguments("--disable-background-timer-throttling");
+  options.addArguments("--disable-backgrounding-occluded-windows");
+  options.addArguments("--disable-breakpad");
+  options.addArguments("--disable-client-side-phishing-detection");
+  options.addArguments("--disable-default-apps");
+  options.addArguments("--disable-hang-monitor");
+  options.addArguments("--disable-popup-blocking");
+  options.addArguments("--disable-prompt-on-repost");
+  options.addArguments("--disable-sync");
   options.addArguments("--window-size=1366,768");
   options.addArguments("--lang=en-US");
+  
+  console.log("✅ Chrome: HEADLESS MODE (no display needed)");
 
   // ── Real Chrome user-agent — masks HeadlessChrome AND selenium identity ───
   options.addArguments(
@@ -171,13 +183,13 @@ async function createDriver() {
             : origQuery(parameters);
       `,
     });
-    console.log("✅ CDP stealth injection applied.");
+    console.log("✅ Anti-bot stealth mode enabled");
   } catch (e) {
-    console.log("⚠ CDP stealth injection skipped:", e.message);
+    console.log("⚠ Anti-bot stealth mode skipped:", e.message);
   }
 
-  // ── Warm-up: visit Google homepage first (like a real user would) ─────────
-  console.log("Warming up — visiting google.com…");
+  // ── Warm-up: visit Google homepage (headless, invisible) ─────────────────
+  console.log("🔍 Starting anonymous scraping...");
   await driver.get("https://www.google.com");
   await sleep(2500 + Math.random() * 2000);
 
