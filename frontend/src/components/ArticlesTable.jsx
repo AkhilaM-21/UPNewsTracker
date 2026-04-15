@@ -62,9 +62,15 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
     return saved ? JSON.parse(saved) : [];
   });
   const [isEnglish, setIsEnglish] = useState(() => {
-    // Always start in original language
-    return false;
+    // Load translation state from sessionStorage if available
+    const saved = sessionStorage.getItem("up_is_english");
+    return saved ? JSON.parse(saved) : false;
   });
+
+  // Save translation state to sessionStorage whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem("up_is_english", JSON.stringify(isEnglish));
+  }, [isEnglish]);
 
   // ── Manual entry state ──────────────────────────────────────────────────────
   const [showManualForm, setShowManualForm] = useState(false);
@@ -112,6 +118,7 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
     setIsEnglish(false); // Reset to original language
+    sessionStorage.removeItem("up_is_english"); // Clear saved translation state
   }, [articles]);
 
   // Sync custom articles to session
