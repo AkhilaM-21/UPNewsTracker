@@ -1,10 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dashboard from "./components/Dashboard";
 import ControlsBar from "./components/ControlsBar";
 import { analyzeArticles } from "./api";
 import "./App.css";
 
 export default function App() {
+  // Load Google Translate script on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !window.googleTranslateLoaded) {
+      window.googleTranslateElementInit = function() {};
+      
+      const script = document.createElement("script");
+      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.head.appendChild(script);
+      
+      window.googleTranslateLoaded = true;
+    }
+  }, []);
   const [articles, setArticles] = useState(() => {
     const saved = sessionStorage.getItem("up_raw_articles");
     return saved ? JSON.parse(saved) : [];
@@ -98,6 +111,9 @@ export default function App() {
           </div>
         </div>
       )}
+      
+      {/* Hidden Google Translate Element */}
+      <div id="google_translate_element" style={{ display: 'none' }}></div>
     </div>
   );
 }
