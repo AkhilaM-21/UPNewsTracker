@@ -376,7 +376,7 @@ app.post("/api/analyze", async (req, res) => {
 app.listen(PORT, () => {
   console.log("\n========================================");
   console.log(`✅ Server running on port ${PORT}`);
-  console.log("🚀 Chrome headless mode: ACTIVE (no display needed)");
+ 
   console.log("📰 Ready to scrape news");
   console.log("========================================\n");
 });
