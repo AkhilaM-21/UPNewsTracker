@@ -140,35 +140,15 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
     setIsEnglish(newVal);
     
     if (newVal) {
-      // Load Google Translate widget if not already loaded
-      if (!window.googleTranslateElement) {
-        const script = document.createElement("script");
-        script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-        document.head.appendChild(script);
-        window.googleTranslateElementInit = function() {
-          new window.google.translate.TranslateElement(
-            { pageLanguage: "hi", includedLanguages: "hi,en", layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE },
-            "google_translate_element"
-          );
-        };
-      }
-      // Trigger translation programmatically
-      setTimeout(() => {
-        const select = document.querySelector(".goog-te-combo");
-        if (select) {
-          select.value = "en";
-          select.dispatchEvent(new Event("change"));
-        }
-      }, 100);
+      // Enable English translation using Google Translate cookie
+      document.cookie = 'googtrans=/hi/en; path=/';
+      // Reload to apply translation
+      setTimeout(() => window.location.reload(), 300);
     } else {
-      // Switch back to Hindi
-      setTimeout(() => {
-        const select = document.querySelector(".goog-te-combo");
-        if (select) {
-          select.value = "hi";
-          select.dispatchEvent(new Event("change"));
-        }
-      }, 100);
+      // Clear translation - show original Hindi
+      document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+      // Reload to restore original
+      setTimeout(() => window.location.reload(), 300);
     }
   };
 
