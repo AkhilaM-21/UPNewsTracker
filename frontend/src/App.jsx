@@ -15,15 +15,43 @@ export default function App() {
   });
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState("");
+  const [runDate,  setRunDate]    = useState(() => {
+    return sessionStorage.getItem("up_run_date") || "";
+  });
   const [lastQuery, setLastQuery] = useState(() => {
     return sessionStorage.getItem("up_last_query") || "";
   });
 
+  const [isEnglish, setIsEnglish] = useState(() => {
+    return document.cookie.includes("googtrans=/auto/en") || document.cookie.includes("googtrans=/en/en");
+  });
+
+  // Sync state to session storage
   React.useEffect(() => {
-    sessionStorage.setItem("up_raw_articles",  JSON.stringify(articles));
+    sessionStorage.setItem("up_raw_articles", JSON.stringify(articles));
     sessionStorage.setItem("up_analyzed_data", JSON.stringify(analyzed));
-    sessionStorage.setItem("up_last_query",    lastQuery);
-  }, [articles, analyzed, lastQuery]);
+    sessionStorage.setItem("up_run_date", runDate);
+    sessionStorage.setItem("up_last_query", lastQuery);
+  }, [articles, analyzed, runDate, lastQuery]);
+
+  const toggleTranslation = () => {
+    const newVal = !isEnglish;
+    setIsEnglish(newVal);
+
+    if (newVal) {
+      // Set cookies for translation
+      document.cookie = "googtrans=/auto/en; path=/";
+      document.cookie = "googtrans=/auto/en; domain=" + window.location.hostname + "; path=/";
+      // Force reload to apply
+      window.location.reload();
+    } else {
+      // Clear cookies
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+      // Force reload to restore original Hindi
+      window.location.reload();
+    }
+  };
 
   async function handleAnalyze(sources, keywords, fromDate, toDate) {
     setLoading(true);
@@ -31,6 +59,9 @@ export default function App() {
     setArticles([]);
     setAnalyzed([]);
     setLastQuery(keywords);
+    setRunDate(new Date().toLocaleDateString("en-IN", {
+      day: "2-digit", month: "long", year: "numeric",
+    }));
 
     // Clear translation cookies for fresh results
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -53,8 +84,19 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="app-header notranslate">
-        <h1>UP Politics Media Tracker</h1>
-        <span className="app-badge">Live Google News</span>
+        <div className="app-header-left">
+          <h1>UP Politics Media Tracker</h1>
+          <span className="app-badge">Manual Analysis Mode</span>
+        </div>
+
+        <div className="trans-toggle-wrap">
+          <span className={`trans-label ${!isEnglish ? 'active' : ''}`}>हिन्दी</span>
+          <label className="trans-switch">
+            <input type="checkbox" checked={isEnglish} onChange={toggleTranslation} />
+            <span className="trans-slider"></span>
+          </label>
+          <span className={`trans-label ${isEnglish ? 'active' : ''}`}>ENG</span>
+        </div>
       </header>
 
       <ControlsBar onAnalyze={handleAnalyze} loading={loading} />
@@ -98,9 +140,6 @@ export default function App() {
           </div>
         </div>
       )}
-      
-      {/* Hidden Google Translate Element */}
-      <div id="google_translate_element" style={{ display: 'none' }}></div>
     </div>
   );
 }
