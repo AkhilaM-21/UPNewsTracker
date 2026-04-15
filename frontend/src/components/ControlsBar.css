@@ -17,84 +17,14 @@
 
 .cb-search-label {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  margin-bottom: 8px;
-}
-.cb-label-left { display: flex; align-items: center; gap: 6px; }
-
-/* ── Translation Toggle ────────────────────────────────── */
-.trans-toggle-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(0,0,0,0.04);
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
-.trans-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: #888;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: color 0.2s;
-}
-
-.trans-label.active {
-  color: var(--orange-dark);
-}
-
-.trans-switch {
-  position: relative;
-  display: inline-block;
-  width: 34px;
-  height: 18px;
-}
-
-.trans-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.trans-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ddd;
-  transition: .4s;
-  border-radius: 18px;
-}
-
-.trans-slider:before {
-  position: absolute;
-  content: "";
-  height: 12px;
-  width: 12px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .trans-slider {
-  background-color: var(--orange);
-}
-
-input:checked + .trans-slider:before {
-  transform: translateX(16px);
+  letter-spacing: .06em;
+  margin-bottom: 8px;
 }
 
 .cb-search-icon { font-size: 13px; }
