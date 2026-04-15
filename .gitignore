@@ -23,10 +23,3 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
-# Search for package.json and npm files if requested to be ignored
-# (Normally package.json is tracked, but user requested deletion from git)
-package.json
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
