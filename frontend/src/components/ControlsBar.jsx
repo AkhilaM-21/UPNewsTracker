@@ -92,25 +92,6 @@ export default function ControlsBar({ onAnalyze, loading }) {
   });
   const [sourcesOpen, setSourcesOpen] = useState(false);
 
-  const [isEnglish, setIsEnglish] = useState(() => {
-    return document.cookie.includes("googtrans=/auto/en") || document.cookie.includes("googtrans=/en/en");
-  });
-
-  const toggleTranslation = () => {
-    const newVal = !isEnglish;
-    setIsEnglish(newVal);
-
-    if (newVal) {
-      document.cookie = "googtrans=/auto/en; path=/";
-      document.cookie = "googtrans=/auto/en; domain=" + window.location.hostname + "; path=/";
-      window.location.reload();
-    } else {
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
-      window.location.reload();
-    }
-  };
-
   // Persist to session storage
   React.useEffect(() => {
     sessionStorage.setItem("up_tracker_selected", JSON.stringify([...selected]));
@@ -153,19 +134,8 @@ export default function ControlsBar({ onAnalyze, loading }) {
       {/* ── HERO SEARCH BAR ─────────────────────────────────────── */}
       <div className="cb-search-hero">
         <div className="cb-search-label">
-          <div className="cb-label-left">
-            <span className="cb-search-icon">🔍</span>
-            Search Query
-          </div>
-          
-          <div className="trans-toggle-wrap">
-            <span className={`trans-label ${!isEnglish ? 'active' : ''}`}>हिन्दी</span>
-            <label className="trans-switch">
-              <input type="checkbox" checked={isEnglish} onChange={toggleTranslation} />
-              <span className="trans-slider"></span>
-            </label>
-            <span className={`trans-label ${isEnglish ? 'active' : ''}`}>ENG</span>
-          </div>
+          <span className="cb-search-icon">🔍</span>
+          Search Query
         </div>
 
         <div className="cb-search-row">
