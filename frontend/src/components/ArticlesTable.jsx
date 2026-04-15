@@ -92,12 +92,6 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
     }
   }, [showManualForm]);
 
-  // Clear translation cookies on mount to show articles in original language
-  useEffect(() => {
-    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
-  }, []);
-
   // Reset state whenever a new search result (articles prop) arrives
   useEffect(() => {
     const map = {};
@@ -113,12 +107,6 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
     setCustomArticles([]); // Clear manual entries for new search
     sessionStorage.removeItem("up_custom_articles");
     setCurrentPage(1); // Back to page 1
-
-    // Clear translation cookies to show original language
-    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
-    setIsEnglish(false); // Reset to original language
-    sessionStorage.removeItem("up_is_english"); // Clear saved translation state
   }, [articles]);
 
   // Sync custom articles to session
@@ -148,12 +136,14 @@ export default function ArticlesTable({ articles, onAnalyze, isAnalyzed }) {
     
     if (newVal) {
       // Enable English translation using Google Translate cookie
-      document.cookie = 'googtrans=/hi/en; path=/';
+      document.cookie = 'googtrans=/hi/en; path=/;';
+      document.cookie = 'googtrans=/hi/en; path=/; domain=' + window.location.hostname;
       // Reload to apply translation
       setTimeout(() => window.location.reload(), 300);
     } else {
       // Clear translation - show original Hindi
-      document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
       // Reload to restore original
       setTimeout(() => window.location.reload(), 300);
     }
